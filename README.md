@@ -18,7 +18,7 @@ Este proyecto es una aplicación CRUD utilizando Blazor. Sigue los pasos a conti
 2. **Crear las Tablas de la Base de Datos**
   -- scrip.sql
    
-3. **Crear las Tablas de la Base de Datos**
+3. **Modifica la cadena de conexión**
   -- En el archivo json
    {
   "ConnectionStrings": {
