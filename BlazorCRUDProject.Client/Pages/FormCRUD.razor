@@ -1,0 +1,51 @@
+﻿@using BlazorCRUDProject.Shared
+@inject HttpClient Http
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Form</h5>
+
+        <!-- Vertical Form -->
+        <form class="row g-3">
+            <div class="col-12">
+                <label for="inputNanme" class="form-label">Name</label>
+                <input type="text" class="form-control" id="inputNanme" @bind-value=employee.Name>
+            </div>
+            <div class="col-12">
+                <label for="inputPosition" class="form-label">Position</label>
+                <input type="text" class="form-control" id="inputPosition" @bind-value=employee.Position>
+            </div>
+            <div class="col-12">
+                <label for="inputpAge" class="form-label">Age</label>
+                <input type="number" class="form-control" id="inputAge" @bind-value=employee.Age>
+            </div>
+            <div class="col-12">
+                <label for="inputStartDate" class="form-label">Start Date</label>
+                <input type="datetime" class="form-control" id="inputStartDate" placeholder="YYYY-MM-DD" @bind-value=employee.StartDate>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary" @onclick=CreateEmployee >Submit</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+            </div>
+        </form><!-- Vertical Form -->
+
+    </div>
+</div>
+
+@code {
+    string Respuesta = "Procesing...";
+    Employee employee = new Employee();
+    
+
+    async Task CreateEmployee()
+    {
+        var respuesta = await Http.PostAsJsonAsync("https://localhost:7031/api/Employee/NewEmployee", employee);
+
+        Respuesta = await respuesta.Content.ReadAsStringAsync();
+
+    }
+
+
+
+    
+}
+

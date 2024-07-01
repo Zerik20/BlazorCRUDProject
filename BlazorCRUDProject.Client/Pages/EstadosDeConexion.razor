@@ -1,0 +1,28 @@
+﻿@inject HttpClient Http
+
+<h4>Estado de la conexion actual</h4>
+<br />
+<p>@ConexionServidor</p>
+<p>@ConexionEmployees</p>
+
+
+
+
+@code {
+    string ConexionServidor = "En espera...";
+    string ConexionEmployees = "En espera...";
+
+    async Task Probarconexion()
+    {
+        var respuesta = await Http.GetStringAsync("https://localhost:7031/api/Employee/ConexionServidor");
+        var respuestaEmplo = await Http.GetStringAsync("https://localhost:7031/api/Employee/ConexionEmployees");
+        ConexionServidor = respuesta;
+        ConexionEmployees = respuestaEmplo;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Probarconexion();
+    }
+
+}

@@ -1,0 +1,117 @@
+﻿@using BlazorCRUDProject.Shared
+@inject HttpClient Http
+
+
+@if (mostrarFormulario)
+{
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Edit Form</h5>
+            <EditForm Model="@employeeEdicion" OnValidSubmit="GuardarCambios">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="inputName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="inputName2" @bind-value="employeeEdicion.Name">
+                    </div>
+                    <div class="col-12">
+                        <label for="inputPosition" class="form-label">Position</label>
+                        <input type="text" class="form-control" id="inputPosition2" @bind-value="employeeEdicion.Position">
+                    </div>
+                    <div class="col-12">
+                        <label for="inputAge" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="inputAge2" @bind-value="employeeEdicion.Age">
+                    </div>
+                    <div class="col-12">
+                        <label for="inputStartDate" class="form-label">Start Date</label>
+                        <input type="datetime" class="form-control" id="inputStartDate2" placeholder="YYYY-MM-DD" @bind-value="employeeEdicion.StartDate">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Employee table</h5>
+
+        <!-- Table with stripped rows -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var emp in Listado)
+                {
+                    <tr>
+                        <td>@emp.Name</td>
+                        <td>@emp.Position</td>
+                        <td>@emp.Age</td>
+                        <td>@emp.StartDate</td>
+                        <td>
+                            <button class="btn btn-success" @onclick="(() => Asignar(emp))">Editar</button>
+                            <button class="btn btn-warning" @onclick="(() => EliminarEmployee(emp.Id))">Eliminar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <!-- End Table with stripped rows -->
+
+    </div>
+</div>
+
+
+
+@code {
+    Employee employee = new Employee();
+    Employee employeeEdicion = new Employee();
+    List<Employee> Listado = new List<Employee>();
+    bool mostrarFormulario = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Actualizar();
+    }
+
+    async Task Actualizar()
+    {
+        Listado = await Http.GetFromJsonAsync<List<Employee>>("https://localhost:7031/api/Employee/ObtainEmployees");
+    }
+
+    async Task EliminarEmployee(int id)
+    {
+        var respuesta = await Http.DeleteAsync($"https://localhost:7031/api/Employee/{id}");
+        await Actualizar();
+    }
+
+    void Asignar(Employee emp)
+    {
+        employeeEdicion = new Employee
+            {
+                Id = emp.Id,
+                Name = emp.Name,
+                Position = emp.Position,
+                Age = emp.Age,
+                StartDate = emp.StartDate
+            };
+        mostrarFormulario = true;
+    }
+
+    async Task GuardarCambios()
+    {
+        var respuesta = await Http.PutAsJsonAsync($"https://localhost:7031/api/Employee/{employeeEdicion.Id}", employeeEdicion);
+        await Actualizar();
+        mostrarFormulario = false;
+    }
+}

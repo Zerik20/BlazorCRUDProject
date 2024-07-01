@@ -1,0 +1,36 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components
+@inject IJSRuntime jsRuntime
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <br />
+    </div><!-- End Page Title -->
+
+    <button class="btn btn-success" @onclick="ToggleForm">CREATE</button>
+    <br />
+    <br />
+
+    @if (isVisible)
+    {
+        <FormCRUD />
+    }
+
+    <Table />
+
+</main><!-- End #main -->
+@code {
+    private bool isVisible = false;
+
+    private void ToggleForm()
+    {
+        isVisible = !isVisible;
+        if (isVisible)
+        {
+            // Optionally, you can scroll to the form when it becomes visible
+            jsRuntime.InvokeVoidAsync("scrollToElement", "#main"); // Example of scrolling to the #main element
+        }
+    }
+}
